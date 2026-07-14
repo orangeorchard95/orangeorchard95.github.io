@@ -9,6 +9,6 @@ obsidian_source: "body factory/体态调整/翼状肩胛.md"
 
 做成了适合打印的图文版，可以直接在下面阅读，也可以全屏查看：
 
-<iframe src="%E7%BF%BC%E7%8A%B6%E8%82%A9%E8%83%9B-apple.html" style="width: 100%; height: 80vh; border: 1px solid #d2d2d7; border-radius: 0.5rem;" loading="lazy"></iframe>
+<iframe src="/embeds/%E7%BF%BC%E7%8A%B6%E8%82%A9%E8%83%9B-apple/" style="width: 100%; height: 80vh; border: 1px solid #d2d2d7; border-radius: 0.5rem;" loading="lazy"></iframe>
 
-[⛶ 全屏查看](%E7%BF%BC%E7%8A%B6%E8%82%A9%E8%83%9B-apple.html)
+[⛶ 全屏查看](/embeds/%E7%BF%BC%E7%8A%B6%E8%82%A9%E8%83%9B-apple/)

@@ -1,0 +1,99 @@
+/* ===== Apple taste 定制 ===== */
+
+/* -- 字体：SF Pro / 苹方系统栈，标题收紧字距 -- */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro SC",
+    "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 {
+  letter-spacing: -0.015em;
+  font-weight: 650;
+}
+
+/* -- 背景：顶部一层很淡的蓝色光晕，落到 Apple 浅灰 -- */
+body {
+  background:
+    radial-gradient(1200px 480px at 50% -120px, rgba(0, 122, 255, 0.10), transparent 70%),
+    linear-gradient(180deg, #f2f6fc 0%, #f5f5f7 480px);
+  background-attachment: scroll;
+}
+.dark body {
+  background:
+    radial-gradient(1200px 480px at 50% -120px, rgba(10, 132, 255, 0.14), transparent 70%),
+    #1c1c1e;
+}
+
+/* -- 吸顶导航：毛玻璃 -- */
+#top {
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+#top > header {
+  background: rgba(255, 255, 255, 0.72) !important;
+}
+.dark #top > header {
+  background: rgba(28, 28, 30, 0.72) !important;
+}
+
+/* -- 文章卡片：白底、大圆角、悬浮微抬升 -- */
+.article-link--card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-radius: 1.1rem !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 40, 100, 0.06);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1), box-shadow 0.25s ease;
+}
+.article-link--card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 60, 150, 0.12);
+}
+.dark .article-link--card {
+  background: rgba(44, 44, 46, 0.9);
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.dark .article-link--card:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+.article-link--card .p-4 {
+  padding: 1.15rem 1.25rem;
+}
+
+/* -- 首页头像卡：柔和的白色玻璃底座 -- */
+.profile img {
+  box-shadow: 0 8px 32px rgba(0, 60, 150, 0.14);
+}
+
+/* -- 链接与按钮的 Apple 蓝节制感：正文链接无下划线，悬停出现 -- */
+.prose a {
+  text-decoration: none;
+}
+.prose a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* -- 文章页引用块：iOS 便签风 -- */
+.prose blockquote {
+  border-left-color: rgb(0, 122, 255);
+  background: rgba(0, 122, 255, 0.05);
+  border-radius: 0 0.6rem 0.6rem 0;
+  padding: 0.35rem 1rem;
+  font-style: normal;
+}
+.dark .prose blockquote {
+  background: rgba(10, 132, 255, 0.1);
+}
+
+/* -- 正文图片：圆角 + 轻投影 -- */
+.prose img {
+  border-radius: 0.8rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* -- 代码块圆角 -- */
+.prose pre {
+  border-radius: 0.8rem;
+}

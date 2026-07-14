@@ -6,7 +6,7 @@ baseURL = "https://orangeorchard95.github.io/"
 defaultContentLanguage = "zh-cn"
 
 enableRobotsTXT = true
-summaryLength = 0
+summaryLength = 30
 
 buildDrafts = false
 buildFuture = false

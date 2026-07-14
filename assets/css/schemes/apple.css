@@ -1,0 +1,37 @@
+/* Apple scheme — 系统蓝 + Apple 灰阶 */
+:root {
+  --color-neutral: 255, 255, 255;
+  /* Apple grays (#f5f5f7 / #d2d2d7 / #8e8e93 / #1c1c1e) */
+  --color-neutral-50: 245, 245, 247;
+  --color-neutral-100: 235, 235, 240;
+  --color-neutral-200: 210, 210, 215;
+  --color-neutral-300: 174, 174, 178;
+  --color-neutral-400: 142, 142, 147;
+  --color-neutral-500: 99, 99, 102;
+  --color-neutral-600: 72, 72, 74;
+  --color-neutral-700: 58, 58, 60;
+  --color-neutral-800: 44, 44, 46;
+  --color-neutral-900: 28, 28, 30;
+  /* Apple blue (#007AFF / #0066CC) */
+  --color-primary-50: 240, 247, 255;
+  --color-primary-100: 224, 239, 255;
+  --color-primary-200: 186, 220, 255;
+  --color-primary-300: 122, 184, 255;
+  --color-primary-400: 64, 156, 255;
+  --color-primary-500: 0, 122, 255;
+  --color-primary-600: 0, 102, 204;
+  --color-primary-700: 0, 85, 179;
+  --color-primary-800: 0, 64, 133;
+  --color-primary-900: 0, 45, 94;
+  /* Apple indigo (#5856D6) */
+  --color-secondary-50: 240, 240, 253;
+  --color-secondary-100: 226, 226, 250;
+  --color-secondary-200: 199, 198, 245;
+  --color-secondary-300: 160, 158, 235;
+  --color-secondary-400: 122, 120, 224;
+  --color-secondary-500: 88, 86, 214;
+  --color-secondary-600: 71, 69, 179;
+  --color-secondary-700: 58, 56, 148;
+  --color-secondary-800: 45, 44, 115;
+  --color-secondary-900: 34, 33, 86;
+}

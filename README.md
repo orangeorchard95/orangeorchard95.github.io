@@ -4,7 +4,7 @@
 
 ## 日常发布流程
 
-1. 在 Obsidian 笔记的 frontmatter 里加 `publish: true`（可选 `title` / `slug` / `section` / `tags` / `date` / `series`）
+1. 在 Obsidian 笔记的 frontmatter 里加 `publish: true`（可选 `title` / `slug` / `section` / `tags` / `date` / `series`；`cover: 图片名.png` 指定列表卡片的封面图）
 2. 运行一条命令：
 
 ```bash

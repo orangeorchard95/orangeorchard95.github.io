@@ -239,10 +239,18 @@ def collect_published():
             if meta.get("series_order"):
                 fm.append(f'series_order: {meta["series_order"]}')
         if meta.get("description"):
-            fm.append(f'description: "{meta["description"]}"')
+            fm.append(f'description: "{toml_escape(str(meta["description"]))}"')
+            fm.append(f'summary: "{toml_escape(str(meta["description"]))}"')
+        cover_src = None
+        if meta.get("cover"):
+            cover_src = find_attachment(str(meta["cover"]), md)
+            if cover_src is None:
+                print(f"  ⚠️  {rel}: 找不到封面图 {meta['cover']!r}")
+            else:
+                fm.append(f'featureimage: "feature{cover_src.suffix.lower()}"')
         fm.append(f"obsidian_source: \"{rel.as_posix()}\"")
         fm.append("---")
-        out[f"{section}/{slug}"] = (md, "\n".join(fm) + "\n" + body)
+        out[f"{section}/{slug}"] = (md, "\n".join(fm) + "\n" + body, cover_src)
     return out
 
 
@@ -266,10 +274,13 @@ def main():
     existing = managed_bundles()
 
     added = updated = 0
-    for key, (src, content) in published.items():
+    for key, (src, content, cover_src) in published.items():
         bundle = CONTENT / key
         idx = bundle / "index.md"
         body, assets = convert_body(content, src, bundle, args.dry_run)
+        if cover_src is not None and not args.dry_run:
+            bundle.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(cover_src, bundle / f"feature{cover_src.suffix.lower()}")
         if idx.exists() and idx.read_text(encoding="utf-8") == body:
             continue
         verb = "更新" if key in existing else "新增"

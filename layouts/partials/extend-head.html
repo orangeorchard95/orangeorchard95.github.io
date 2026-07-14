@@ -1,0 +1,10 @@
+{{/* 访问统计 — 推荐 GoatCounter：到 https://www.goatcounter.com 注册一个 code，
+     然后在 params.toml 加 goatcounter = "你的code" 即自动启用。
+     （Umami 则直接用 Blowfish 内置的 [umamiAnalytics] 配置，不走这里。） */}}
+{{ with .Params.goatcounter }}
+<script
+  data-goatcounter="https://{{ . }}.goatcounter.com/count"
+  async
+  src="//gc.zgo.at/count.js"
+></script>
+{{ end }}

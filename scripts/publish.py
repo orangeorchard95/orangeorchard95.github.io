@@ -109,6 +109,43 @@ def safe_asset_name(path, used):
     return name
 
 
+def copy_html_attachment(src, dry_run):
+    """HTML 附件（含其引用的图片）复制到 static/embeds/ 原样发布，返回 URL 路径。
+    不能放进 content bundle：Hugo 会把 .html 当内容页处理。"""
+    html = src.read_text(encoding="utf-8")
+    stem = re.sub(r"[^\w一-鿿-]+", "-", src.stem).strip("-") or "doc"
+    embed_dir = SITE / "static" / "embeds" / stem
+    used, assets = set(), []
+
+    def src_repl(m):
+        ref = urllib.parse.unquote(m.group(1))
+        if re.match(r"^(https?:|data:|/)", ref):
+            return m.group(0)
+        img = find_attachment(ref, src)
+        if img is None:
+            return m.group(0)
+        name = safe_asset_name(img, used)
+        assets.append((img, name))
+        return f'src="{urllib.parse.quote(name)}"'
+
+    html = re.sub(r'src="([^"]+)"', src_repl, html)
+    # 注入自适应缩放：固定宽度的文档（如 A4 排版）在窄 iframe 里整体缩小而不是横向裁切
+    fit = ("<script>(function(){function fit(){var d=document.documentElement,b=document.body;"
+           "b.style.zoom='';var w=Math.max(b.scrollWidth,d.scrollWidth);"
+           "var s=d.clientWidth/w;if(s<1)b.style.zoom=s;}"
+           "addEventListener('load',fit);addEventListener('resize',fit);})();</script>")
+    if "</body>" in html:
+        html = html.replace("</body>", fit + "</body>", 1)
+    else:
+        html += fit
+    if not dry_run:
+        embed_dir.mkdir(parents=True, exist_ok=True)
+        (embed_dir / "index.html").write_text(html, encoding="utf-8")
+        for img, name in assets:
+            shutil.copy2(img, embed_dir / name)
+    return f"/embeds/{urllib.parse.quote(stem)}/"
+
+
 def convert_body(body, note_path, bundle_dir, dry_run):
     """转换 Obsidian 语法为标准 markdown，复制引用的图片进 page bundle。"""
     used = set()
@@ -124,6 +161,14 @@ def convert_body(body, note_path, bundle_dir, dry_run):
             name = safe_asset_name(src, used)
             copied.append((src, name))
             return f"![{alt}]({urllib.parse.quote(name)})"
+        if src.suffix.lower() in (".html", ".htm"):
+            url = copy_html_attachment(src, dry_run)
+            return (
+                f'<iframe src="{url}" '
+                'style="width: 100%; height: 80vh; border: 1px solid #d2d2d7; border-radius: 0.5rem;" '
+                'loading="lazy"></iframe>\n\n'
+                f'[⛶ 全屏查看]({url})'
+            )
         return f"<!-- 跳过非图片附件: {target} -->"
 
     # ![[embed]] → 图片；[[link|text]] → text；[[link]] → link 文本
@@ -242,11 +287,16 @@ def main():
         return
 
     if added or updated or removed:
-        subprocess.run(["git", "-C", str(SITE), "add", "content"], check=True)
+        msg = f"发布更新：新增{added} 更新{updated} 下线{removed}"
+    else:
+        msg = "发布更新：附件资源更新"
+    subprocess.run(["git", "-C", str(SITE), "add", "content", "static"], check=True)
+    dirty = subprocess.run(["git", "-C", str(SITE), "diff", "--cached", "--quiet"]).returncode != 0
+    if dirty:
         subprocess.run(
             ["git", "-C", str(SITE), "commit",
              f"--author={GIT_AUTHOR}",
-             "-m", f"发布更新：新增{added} 更新{updated} 下线{removed}"],
+             "-m", msg],
             check=True,
             env={"GIT_COMMITTER_NAME": "Orange",
                  "GIT_COMMITTER_EMAIL": "orangeorchard95@users.noreply.github.com",

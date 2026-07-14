@@ -3,6 +3,7 @@ title: "为什么是「身体工厂」"
 date: 2026-07-14
 tags: ["健身", "体态"]
 description: "这个栏目的由来：从基础力量到运动表现，再到体态。"
+summary: "这个栏目的由来：从基础力量到运动表现，再到体态。"
 obsidian_source: "body factory/为什么是身体工厂.md"
 ---
 其实我对自己的身体很关注。

@@ -5,6 +5,7 @@ tags: ["量化", "学习路径"]
 series: ["量化学习路径"]
 series_order: 0
 description: "为什么要学量化，以及我打算怎么学。"
+summary: "为什么要学量化，以及我打算怎么学。"
 obsidian_source: "Quant/量化学习路径-00-开篇.md"
 ---
 我要在这里记录量化知识的学习内容。

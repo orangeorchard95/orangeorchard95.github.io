@@ -169,6 +169,14 @@ def convert_body(body, note_path, bundle_dir, dry_run):
                 'loading="lazy"></iframe>\n\n'
                 f'[⛶ 全屏查看]({url})'
             )
+        if src.suffix.lower() == ".pdf":
+            stem = re.sub(r"[^\w一-鿿-]+", "-", src.stem).strip("-") or "file"
+            name = f"{stem}.pdf"
+            if not dry_run:
+                files_dir = SITE / "static" / "files"
+                files_dir.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, files_dir / name)
+            return f"[📄 下载打印版 PDF](/files/{urllib.parse.quote(name)})"
         return f"<!-- 跳过非图片附件: {target} -->"
 
     # ![[embed]] → 图片；[[link|text]] → text；[[link]] → link 文本

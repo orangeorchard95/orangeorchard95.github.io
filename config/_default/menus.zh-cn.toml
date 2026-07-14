@@ -20,6 +20,11 @@
   weight = 40
 
 [[main]]
+  name = "照片墙"
+  pageRef = "photos"
+  weight = 45
+
+[[main]]
   name = "关于"
   pageRef = "about"
   weight = 50

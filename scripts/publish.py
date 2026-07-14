@@ -50,6 +50,11 @@ SKIP_DIRS = {".obsidian", ".trash", "Attachments", "node_modules"}
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".heic"}
 
+# 照片墙：photos 仓库下每个含图片的子文件夹自动发布为一个合集
+# （photos 仓库整体视为白名单；文件夹里放一个 md 写 publish: false 可排除）
+PHOTOS_DIR = VAULT / "photos"
+PHOTO_MAX_EDGE = "1600"
+
 
 def parse_frontmatter(text):
     """极简 YAML frontmatter 解析（key: value / 布尔 / [a, b] 列表 / - 列表项）。"""
@@ -204,12 +209,86 @@ def toml_escape(s):
     return s.replace("\\", "\\\\").replace('"', '\\"')
 
 
+def copy_photo(src, dest):
+    """照片压缩复制：最长边 1600px、jpeg 质量 85（原图动辄 2-3MB，压后约 1/10）。"""
+    args = ["sips", "-Z", PHOTO_MAX_EDGE, "-s", "formatOptions", "85"]
+    if src.suffix.lower() == ".heic":
+        args += ["-s", "format", "jpeg"]
+    r = subprocess.run(args + [str(src), "--out", str(dest)], capture_output=True)
+    if r.returncode != 0:
+        shutil.copy2(src, dest)
+
+
+def collect_photo_collections():
+    """photos 仓库下的子文件夹 → 照片合集页。返回 {bundle路径: (index内容, [(源图, 文件名)])}。"""
+    out = {}
+    if not PHOTOS_DIR.is_dir():
+        return out
+    for folder in sorted(PHOTOS_DIR.iterdir()):
+        if not folder.is_dir() or folder.name.startswith(".") or folder.name in SKIP_DIRS:
+            continue
+        imgs = sorted(
+            (p for p in folder.iterdir() if p.suffix.lower() in IMAGE_EXTS),
+            key=lambda p: p.stat().st_mtime, reverse=True)
+        if not imgs:
+            continue
+        meta = {}
+        for mdf in sorted(folder.glob("*.md")):
+            meta, _ = parse_frontmatter(mdf.read_text(encoding="utf-8"))
+            break
+        if meta.get("publish") is False:
+            continue
+
+        title = str(meta.get("title", "")) or folder.name
+        slug = str(meta.get("slug", "")) or re.sub(r"[^\w一-鿿-]+", "-", folder.name).strip("-")
+        date = datetime.date.fromtimestamp(imgs[0].stat().st_mtime).isoformat()
+        desc = str(meta.get("description", "")) or f"{len(imgs)} 张照片"
+
+        used, pairs = set(), []
+        for p in imgs:
+            suffix = ".jpeg" if p.suffix.lower() == ".heic" else p.suffix.lower()
+            stem = re.sub(r"[^\w一-鿿-]+", "-", p.stem).strip("-") or "img"
+            name = f"{stem}{suffix}"
+            i = 1
+            while name in used:
+                name = f"{stem}-{i}{suffix}"
+                i += 1
+            used.add(name)
+            pairs.append((p, name))
+
+        cover = pairs[0][1]
+        if meta.get("cover"):
+            for p, n in pairs:
+                if p.name == str(meta["cover"]):
+                    cover = n
+                    break
+
+        lines = ["---",
+                 f'title: "{toml_escape(title)}"',
+                 f"date: {date}",
+                 f'description: "{toml_escape(desc)}"',
+                 f'summary: "{toml_escape(desc)}"',
+                 f'featureimage: "{cover}"',
+                 "showTableOfContents: false",
+                 f"obsidian_source: \"photos/{folder.name}\"",
+                 "---", ""]
+        lines.append("{{< gallery >}}")
+        for _, name in pairs:
+            # 不能加 loading="lazy"：Blowfish 相册用 Packery 在 window.load 时排版，懒加载会拿不到图片尺寸
+            lines.append(f'  <img src="{urllib.parse.quote(name)}" class="grid-w50 md:grid-w33" />')
+        lines.append("{{< /gallery >}}")
+        out[f"photos/{slug}"] = ("\n".join(lines) + "\n", pairs)
+    return out
+
+
 def collect_published():
     """扫描 vault，返回 {bundle相对路径: (源文件, 生成的index.md内容)}。"""
     out = {}
     for md in sorted(VAULT.rglob("*.md")):
         rel = md.relative_to(VAULT)
         if any(part in SKIP_DIRS or part.startswith(".") for part in rel.parts):
+            continue
+        if rel.parts[0] == "photos":  # photos 仓库由照片墙流程处理
             continue
         try:
             text = md.read_text(encoding="utf-8")
@@ -271,6 +350,7 @@ def main():
 
     print(f"📖 扫描 vault: {VAULT}")
     published = collect_published()
+    photos = collect_photo_collections()
     existing = managed_bundles()
 
     added = updated = 0
@@ -292,15 +372,33 @@ def main():
         else:
             added += 1
 
+    for key, (content, pairs) in photos.items():
+        bundle = CONTENT / key
+        idx = bundle / "index.md"
+        new_imgs = [(p, n) for p, n in pairs if not (bundle / n).exists()]
+        if idx.exists() and idx.read_text(encoding="utf-8") == content and not new_imgs:
+            continue
+        verb = "更新" if key in existing else "新增"
+        print(f"  📷 {verb} {key}（共 {len(pairs)} 张，本次压缩 {len(new_imgs)} 张）")
+        if not args.dry_run:
+            bundle.mkdir(parents=True, exist_ok=True)
+            idx.write_text(content, encoding="utf-8")
+            for p, n in new_imgs:
+                copy_photo(p, bundle / n)
+        if key in existing:
+            updated += 1
+        else:
+            added += 1
+
     removed = 0
     for key, path in existing.items():
-        if key not in published:
+        if key not in published and key not in photos:
             print(f"  🗑  下线 {key}（源笔记已取消 publish 标记）")
             if not args.dry_run:
                 shutil.rmtree(path)
             removed += 1
 
-    print(f"\n共 {len(published)} 篇已发布：新增 {added}，更新 {updated}，下线 {removed}")
+    print(f"\n共 {len(published) + len(photos)} 篇已发布：新增 {added}，更新 {updated}，下线 {removed}")
     if args.dry_run:
         print("（dry-run，未写入任何文件）")
         return

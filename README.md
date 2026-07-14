@@ -26,6 +26,14 @@ python3 scripts/publish.py
 
 frontmatter 里写 `section: xxx` 可覆盖默认映射。
 
+## 照片墙
+
+vault 的 `photos/` 仓库下**每个含图片的子文件夹自动发布为一个合集**（如 `photos/面包🥖/` → `/photos/面包/`），发布时自动压缩到最长边 1600px。注意：photos 仓库整体视为白名单，放进去的照片都会公开。
+
+- 往文件夹里加照片 → 运行发布命令即更新合集
+- 文件夹里放一个 md 文件可自定义元信息（`title` / `description` / `cover: 图片文件名` / `publish: false` 排除整个文件夹）
+- 删除文件夹 → 再运行发布命令即下线合集
+
 ## 常用操作
 
 ```bash

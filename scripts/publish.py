@@ -30,7 +30,7 @@ import sys
 import urllib.parse
 from pathlib import Path
 
-VAULT = Path.home() / "Library/Mobile Documents/iCloud~md~obsidian/Documents"
+VAULT = Path.home() / "Documents/obsidian-repo"
 SITE = Path(__file__).resolve().parent.parent
 CONTENT = SITE / "content"
 

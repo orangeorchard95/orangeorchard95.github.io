@@ -1,0 +1,38 @@
+{{ define "main" }}
+  {{ .Scratch.Set "scope" "list" }}
+
+  <header>
+    <h1 class="mt-5 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+      {{ .Title | emojify }}
+    </h1>
+  </header>
+
+  <section class="prose dark:prose-invert mt-3 mb-8 max-w-full">
+    {{ .Content }}
+  </section>
+
+  <div class="media-wall">
+    {{ range .Pages.ByDate.Reverse }}
+      <a href="{{ .RelPermalink }}" class="media-card">
+        <div class="media-poster">
+          {{ $poster := .Resources.GetMatch "feature*" }}
+          {{ if $poster }}
+            {{ $thumb := $poster.Fill "480x720 q85" }}
+            <img src="{{ $thumb.RelPermalink }}" alt="{{ .Title }}" loading="lazy" width="480" height="720" />
+          {{ else }}
+            <div class="media-poster-empty"><span>{{ .Title }}</span></div>
+          {{ end }}
+          <span class="media-badge">{{ if eq .Params.media_type "book" }}📖{{ else }}🎬{{ end }}</span>
+        </div>
+        <div class="media-card-title">{{ .Title }}</div>
+        {{ with .Params.rating }}
+          <div class="media-card-rating">{{ partial "media-stars.html" . }}</div>
+        {{ end }}
+      </a>
+    {{ end }}
+  </div>
+
+  {{ if not .Pages }}
+    <p class="text-neutral-500 dark:text-neutral-400">墙上还空着，第一部看完的电影会出现在这里。</p>
+  {{ end }}
+{{ end }}

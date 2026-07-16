@@ -41,10 +41,14 @@ SECTION_MAP = {
     "dairy": "thoughts",
     "Quant": "quant",
     "body factory": "bodyfactory",
-    "movies": "sharing",
+    "movies": "media",
+    "reading": "media",
 }
 DEFAULT_SECTION = "sharing"
-VALID_SECTIONS = {"thoughts", "quant", "bodyfactory", "sharing"}
+VALID_SECTIONS = {"thoughts", "quant", "bodyfactory", "sharing", "media"}
+
+# 书影栏目：来源文件夹 → 条目类型（看板角标 🎬/📖 和详情页信息栏用）
+MEDIA_TYPE_MAP = {"movies": "movie", "reading": "book"}
 
 SKIP_DIRS = {".obsidian", ".trash", "Attachments", "node_modules"}
 
@@ -320,13 +324,29 @@ def collect_published():
         if meta.get("description"):
             fm.append(f'description: "{toml_escape(str(meta["description"]))}"')
             fm.append(f'summary: "{toml_escape(str(meta["description"]))}"')
+        if section == "media":
+            media_type = str(meta.get("type", "")) or MEDIA_TYPE_MAP.get(rel.parts[0], "movie")
+            fm.append(f'media_type: "{media_type}"')
+        if meta.get("rating") not in (None, "", []):
+            try:
+                fm.append(f"rating: {float(meta['rating']):g}")
+            except (TypeError, ValueError):
+                print(f"  ⚠️  {rel}: rating 不是数字，已忽略: {meta['rating']!r}")
         cover_src = None
         if meta.get("cover"):
             cover_src = find_attachment(str(meta["cover"]), md)
             if cover_src is None:
                 print(f"  ⚠️  {rel}: 找不到封面图 {meta['cover']!r}")
-            else:
-                fm.append(f'featureimage: "feature{cover_src.suffix.lower()}"')
+        elif section == "media":
+            # 书影条目不写 cover 时，正文第一张图自动升级为海报（同时从正文移除，避免详情页重复出现）
+            for m_img in re.finditer(r"!\[\[([^\]]+)\]\]", body):
+                cand = find_attachment(m_img.group(1), md)
+                if cand is not None and cand.suffix.lower() in IMAGE_EXTS:
+                    cover_src = cand
+                    body = body[:m_img.start()] + body[m_img.end():]
+                    break
+        if cover_src is not None:
+            fm.append(f'featureimage: "feature{cover_src.suffix.lower()}"')
         fm.append(f"obsidian_source: \"{rel.as_posix()}\"")
         fm.append("---")
         out[f"{section}/{slug}"] = (md, "\n".join(fm) + "\n" + body, cover_src)
@@ -345,6 +365,7 @@ def managed_bundles():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-push", action="store_true", help="不推送到 GitHub")
+    ap.add_argument("--no-commit", action="store_true", help="只同步文件，不 commit 也不推送（配合 hugo server 本地预览）")
     ap.add_argument("--dry-run", action="store_true", help="只预览，不写文件")
     args = ap.parse_args()
 
@@ -401,6 +422,9 @@ def main():
     print(f"\n共 {len(published) + len(photos)} 篇已发布：新增 {added}，更新 {updated}，下线 {removed}")
     if args.dry_run:
         print("（dry-run，未写入任何文件）")
+        return
+    if args.no_commit:
+        print("📂 已同步文件（--no-commit，未提交），hugo server 可本地预览")
         return
 
     if added or updated or removed:

@@ -1,0 +1,53 @@
+{{ define "main" }}
+  {{ .Scratch.Set "scope" "single" }}
+  <article class="media-detail">
+    <header class="mt-5">
+      <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+        {{ .Title | emojify }}
+      </h1>
+    </header>
+
+    <div class="media-detail-top">
+      {{ $poster := .Resources.GetMatch "feature*" }}
+      {{ with $poster }}
+        {{ $img := .Resize "600x q90" }}
+        <img class="media-detail-poster" src="{{ $img.RelPermalink }}" alt="{{ $.Title }}"
+             width="{{ $img.Width }}" height="{{ $img.Height }}" />
+      {{ end }}
+      <dl class="media-detail-info">
+        <div>
+          <dt>类型</dt>
+          <dd>{{ if eq .Params.media_type "book" }}📖 书{{ else }}🎬 电影{{ end }}</dd>
+        </div>
+        {{ with .Params.rating }}
+          <div>
+            <dt>评分</dt>
+            <dd>{{ partial "media-stars.html" . }}<span class="media-score">{{ . }}</span></dd>
+          </div>
+        {{ end }}
+        <div>
+          <dt>{{ if eq .Params.media_type "book" }}读完于{{ else }}看完于{{ end }}</dt>
+          <dd>{{ .Date | time.Format "2006 年 1 月 2 日" }}</dd>
+        </div>
+        {{ with .Params.tags }}
+          <div>
+            <dt>标签</dt>
+            <dd>
+              {{ range . }}
+                <a class="media-tag" href="{{ (printf "/tags/%s/" (. | urlize)) | relURL }}">{{ . }}</a>
+              {{ end }}
+            </dd>
+          </div>
+        {{ end }}
+      </dl>
+    </div>
+
+    <section class="media-detail-body prose dark:prose-invert mt-10 max-w-prose">
+      {{ .Content | emojify }}
+    </section>
+
+    <div class="mt-12">
+      <a href="{{ "/media/" | relURL }}" class="media-back">← 回到书影墙</a>
+    </div>
+  </article>
+{{ end }}

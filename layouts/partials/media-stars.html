@@ -1,0 +1,5 @@
+{{- /* 星级渲染：传入 0-5 的评分（支持半星），叠两层星星、上层按百分比裁宽 */ -}}
+{{- $r := . -}}
+<span class="star-rating" role="img" aria-label="评分 {{ $r }} / 5">
+  <span class="star-bg" aria-hidden="true">★★★★★</span><span class="star-fg" aria-hidden="true" style="width: {{ div (mul (float $r) 100) 5 }}%">★★★★★</span>
+</span>

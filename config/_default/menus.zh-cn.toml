@@ -25,6 +25,11 @@
   weight = 45
 
 [[main]]
+  name = "书影"
+  pageRef = "media"
+  weight = 47
+
+[[main]]
   name = "关于"
   pageRef = "about"
   weight = 50

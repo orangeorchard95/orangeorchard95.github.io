@@ -1,6 +1,6 @@
 ---
 title: "观音山"
-date: 2026-01-01
+date: 2026-07-15
 media_type: "movie"
 rating: 4.5
 featureimage: "feature.png"

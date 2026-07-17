@@ -1,53 +1,89 @@
-/* ===== Apple taste 定制 ===== */
+/* ===== Apple Design v2 — 流体界面升级 ===== */
+/* 基于 WWDC "Designing Fluid Interfaces" 原则 */
 
-/* -- 字体：SF Pro / 苹方系统栈，标题收紧字距 -- */
+/* -- 1. 字体：光学尺寸 + 动态字距 -- */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro SC",
     "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
-  letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
-}
-h1, h2, h3, h4 {
-  letter-spacing: -0.015em;
-  font-weight: 650;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
 }
 
-/* -- 背景：顶部一层很淡的蓝色光晕，落到 Apple 浅灰 -- */
+/* 大标题收紧字距 */
+h1, h2 {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  line-height: 1.1;
+}
+h3, h4 {
+  letter-spacing: -0.015em;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+/* 小字号放宽字距 */
+.text-sm, .text-xs, .media-card-meta, .media-card-desc {
+  letter-spacing: 0.02em;
+}
+
+/* -- 2. 背景：顶部光晕 + 滚动视差感 -- */
 body {
   background:
     radial-gradient(1200px 480px at 50% -120px, rgba(0, 122, 255, 0.10), transparent 70%),
     linear-gradient(180deg, #f2f6fc 0%, #f5f5f7 480px);
-  background-attachment: scroll;
+  background-attachment: fixed;
 }
 .dark body {
   background:
     radial-gradient(1200px 480px at 50% -120px, rgba(10, 132, 255, 0.14), transparent 70%),
     #1c1c1e;
+  background-attachment: fixed;
 }
 
-/* -- 吸顶导航：毛玻璃 -- */
+/* -- 3. 吸顶导航：增强毛玻璃 + 分割线 -- */
 #top {
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 #top > header {
   background: rgba(255, 255, 255, 0.72) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 .dark #top > header {
   background: rgba(28, 28, 30, 0.72) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* -- 文章卡片：白底、大圆角、悬浮微抬升 -- */
+/* -- 4. 按钮/链接：Pointer-down 即时反馈（响应性） -- */
+/* 所有可点击元素在按下瞬间缩小 */
+a, button, .article-link--card, .media-card, 
+.pagination a, .menu-link, .tag, .media-tag {
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+}
+a:active, button:active, .article-link--card:active, .media-card:active,
+.pagination a:active, .menu-link:active, .tag:active, .media-tag:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+/* -- 5. 文章卡片：Spring 感悬浮动画 -- */
 .article-link--card {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(0, 0, 0, 0.06) !important;
   border-radius: 1.1rem !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 40, 100, 0.06);
-  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1), box-shadow 0.25s ease;
+  transition: 
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
 }
 .article-link--card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 60, 150, 0.12);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 20px 48px rgba(0, 60, 150, 0.12);
+}
+.article-link--card:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease-out;
 }
 .dark .article-link--card {
   background: rgba(44, 44, 46, 0.9);
@@ -55,62 +91,134 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .dark .article-link--card:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 16px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 20px 48px rgba(0, 0, 0, 0.5);
 }
 .article-link--card .p-4 {
   padding: 1.15rem 1.25rem;
 }
 
-/* -- 首页头像卡：柔和的白色玻璃底座 -- */
-.profile img {
-  box-shadow: 0 8px 32px rgba(0, 60, 150, 0.14);
+/* -- 6. 书影海报卡片：Spring 悬浮 + 按下反馈 -- */
+.media-poster {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  transition: 
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+}
+.media-card:hover .media-poster {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+.media-card:active .media-poster {
+  transform: scale(0.96);
+  transition: transform 0.1s ease-out;
 }
 
-/* -- 链接与按钮的 Apple 蓝节制感：正文链接无下划线，悬停出现 -- */
+/* -- 7. 照片墙：弹簧感放大 -- */
+.gallery img {
+  border-radius: 0.7rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.gallery img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+.gallery img:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease-out;
+}
+
+/* -- 8. 首页头像卡 -- */
+.profile img {
+  box-shadow: 0 8px 32px rgba(0, 60, 150, 0.14);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.profile img:hover {
+  transform: scale(1.03);
+}
+
+/* -- 9. 链接：Apple 蓝节制感 -- */
 .prose a {
   text-decoration: none;
+  transition: opacity 0.15s ease;
 }
 .prose a:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+  opacity: 0.8;
+}
+.prose a:active {
+  opacity: 0.6;
 }
 
-/* -- 文章页引用块：iOS 便签风 -- */
+/* -- 10. 引用块：iOS 便签风 -- */
 .prose blockquote {
-  border-left-color: rgb(0, 122, 255);
+  border-left: 3px solid rgb(0, 122, 255);
   background: rgba(0, 122, 255, 0.05);
   border-radius: 0 0.6rem 0.6rem 0;
-  padding: 0.35rem 1rem;
+  padding: 0.5rem 1rem;
   font-style: normal;
 }
 .dark .prose blockquote {
   background: rgba(10, 132, 255, 0.1);
 }
 
-/* -- 正文图片：圆角 + 轻投影 -- */
+/* -- 11. 正文图片：圆角 + 轻投影 -- */
 .prose img {
   border-radius: 0.8rem;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.prose img:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
-/* -- 代码块圆角 -- */
+/* -- 12. 代码块圆角 -- */
 .prose pre {
   border-radius: 0.8rem;
 }
 
-/* -- 照片墙相册：圆角 + 悬停微放大 -- */
-.gallery img {
-  border-radius: 0.7rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+/* -- 13. 滚动条：iOS 风格 -- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-.gallery img:hover {
-  transform: scale(1.02);
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* ===== 书影栏目（/media/） ===== */
+/* ===== Reduced Motion — 尊重用户偏好 ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .article-link--card:hover,
+  .media-card:hover .media-poster,
+  .gallery img:hover,
+  .profile img:hover {
+    transform: none;
+  }
+}
 
-/* -- 海报墙：竖版 2:3 网格 -- */
+/* ===== 书影栏目（/media/）增强 ===== */
+
+/* 海报墙 */
 .media-wall {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -126,12 +234,6 @@ body {
   aspect-ratio: 2 / 3;
   border-radius: 0.7rem;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.3, 1), box-shadow 0.3s ease;
-}
-.media-card:hover .media-poster {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
 }
 .media-poster img {
   width: 100%;
@@ -169,6 +271,7 @@ body {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 .media-card-title {
@@ -214,7 +317,7 @@ body {
   color: rgb(var(--color-neutral-400, 163 163 163));
 }
 
-/* -- 星级：双层星星，上层按评分百分比裁宽 -- */
+/* 星级 */
 .star-rating {
   position: relative;
   display: inline-block;
@@ -236,7 +339,7 @@ body {
   color: #f5a623;
 }
 
-/* -- 详情页：左海报右信息栏 -- */
+/* 详情页 */
 .media-detail-top {
   display: flex;
   gap: 1.8rem;
@@ -249,6 +352,10 @@ body {
   flex-shrink: 0;
   border-radius: 0.8rem;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.16);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.media-detail-poster:hover {
+  transform: scale(1.02);
 }
 .media-detail-info {
   display: flex;
@@ -287,6 +394,13 @@ body {
   font-size: 0.82rem;
   background: rgba(0, 122, 255, 0.09);
   text-decoration: none;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.media-tag:hover {
+  background: rgba(0, 122, 255, 0.18);
+}
+.media-tag:active {
+  transform: scale(0.95);
 }
 .dark .media-tag {
   background: rgba(10, 132, 255, 0.18);
@@ -296,7 +410,7 @@ body {
   text-decoration: none;
 }
 
-/* -- 窄屏：海报墙更密，详情页保持左右但收窄 -- */
+/* 窄屏适配 */
 @media (max-width: 640px) {
   .media-wall {
     grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));

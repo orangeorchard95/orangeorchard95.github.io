@@ -1,19 +1,13 @@
 ---
 title: "观音山"
 date: 2026-07-15
+description: "不见阳光也没有雨水的天气里火车穿梭在浓雾笼罩的观音山，自由与不安一同扑面而来。"
+summary: "不见阳光也没有雨水的天气里火车穿梭在浓雾笼罩的观音山，自由与不安一同扑面而来。"
 media_type: "movie"
 rating: 4.5
 featureimage: "feature.png"
 obsidian_source: "movies/观音山.md"
 ---
-（复制这个文件，文件名改成电影名，改好 frontmatter 后把 publish 改成 true）
-
-- `rating`：5 星制，支持半星（如 4.5）
-- `date`：看完的日期
-- 海报：直接在下面粘贴图片，**第一张图自动成为看板海报**（不会在正文重复显示）；想用别的图当海报就在 frontmatter 加 `cover: 图片名.png`
-
-在这里粘贴海报 / 剧照，然后写心得——一句话也行。
-
 
 ![Pasted image 20260716143710](Pasted-image-20260716143710.png)
 周三晚，打完球回到小屋肉体非常疲惫了精神却不得安静。

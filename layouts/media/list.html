@@ -25,8 +25,12 @@
           <span class="media-badge">{{ if eq .Params.media_type "book" }}📖{{ else }}🎬{{ end }}</span>
         </div>
         <div class="media-card-title">{{ .Title }}</div>
-        {{ with .Params.rating }}
-          <div class="media-card-rating">{{ partial "media-stars.html" . }}</div>
+        <div class="media-card-meta">
+          {{ with .Params.rating }}<span class="media-card-rating">{{ partial "media-stars.html" . }}</span>{{ end }}
+          <span class="media-card-date">{{ .Date | time.Format "2006.01.02" }}</span>
+        </div>
+        {{ with .Params.description }}
+          <div class="media-card-desc">{{ . }}</div>
         {{ end }}
       </a>
     {{ end }}

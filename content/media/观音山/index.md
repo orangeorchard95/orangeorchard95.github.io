@@ -1,5 +1,5 @@
 ---
-title: "电影名"
+title: "观音山"
 date: 2026-01-01
 media_type: "movie"
 rating: 4.5

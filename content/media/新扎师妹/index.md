@@ -1,5 +1,5 @@
 ---
-title: "电影名"
+title: "新扎师妹"
 date: 2026-07-06
 media_type: "movie"
 rating: 4

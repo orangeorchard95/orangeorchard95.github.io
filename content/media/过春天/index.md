@@ -1,5 +1,5 @@
 ---
-title: "电影名"
+title: "过春天"
 date: 2026-07-12
 media_type: "movie"
 rating: 4.5

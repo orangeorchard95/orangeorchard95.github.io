@@ -52,6 +52,18 @@ MEDIA_TYPE_MAP = {"movies": "movie", "reading": "book"}
 
 SKIP_DIRS = {".obsidian", ".trash", "Attachments", "node_modules"}
 
+# 首页文案：vault 里这个文件的内容每次发布同步为网站首页
+# 链接按「链接文字」自动修正目标，Obsidian 里写空链接 [印象]() 也能发对
+HOMEPAGE_SOURCE = VAULT / "dairy" / "Orangeorchard.md"
+HOME_LINK_MAP = {
+    "思考": "/thoughts/",
+    "量化": "/quant/",
+    "BodyFactory": "/bodyfactory/",
+    "印象": "/media/",
+    "相册": "/photos/",
+    "关于我": "/about/",
+}
+
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".heic"}
 
 # 照片墙：photos 仓库下每个含图片的子文件夹自动发布为一个合集
@@ -353,6 +365,48 @@ def collect_published():
     return out
 
 
+def build_homepage():
+    """dairy/Orangeorchard.md → content/_index.md 的内容。
+    第一个非空行作为大标题，[文字](任意链接) 和 [[文字]] 都按 HOME_LINK_MAP 修正目标。"""
+    if not HOMEPAGE_SOURCE.exists():
+        return None
+    meta, body = parse_frontmatter(HOMEPAGE_SOURCE.read_text(encoding="utf-8"))
+    if meta.get("publish") is False:
+        return None
+    body = body.strip()
+    if not body:
+        return None
+
+    def link_repl(m):
+        text, url = m.group(1), m.group(2).strip()
+        mapped = HOME_LINK_MAP.get(text)
+        if mapped:
+            return f"[{text}]({mapped})"
+        if not url or url == "#" or "localhost" in url:
+            print(f"  ⚠️  首页文案链接 [{text}] 不在 HOME_LINK_MAP 里，保持原样")
+        return m.group(0)
+
+    body = re.sub(r"(?<!\!)\[([^\]\[]+)\]\(([^)]*)\)", link_repl, body)
+    body = re.sub(r"\[\[([^\]|]+)\]\]",
+                  lambda m: f"[{m.group(1)}]({HOME_LINK_MAP[m.group(1)]})"
+                  if m.group(1) in HOME_LINK_MAP else m.group(1), body)
+
+    lines = body.split("\n")
+    heading = lines[0].strip()
+    if not heading.startswith("#"):
+        heading = "# " + heading
+    rest = "\n".join(lines[1:]).strip()
+
+    title = str(meta.get("title", "")) or "Orange Orchard"
+    desc = str(meta.get("description", "")) or "Orange 的个人网站 — 思考、量化、身体、书影与相册"
+    return ("---\n"
+            f'title: "{toml_escape(title)}"\n'
+            f'description: "{toml_escape(desc)}"\n'
+            'obsidian_source: "dairy/Orangeorchard.md"\n'
+            "---\n\n"
+            f"{heading}\n\n{rest}\n")
+
+
 def managed_bundles():
     """站点里所有由本脚本生成（带 obsidian_source 标记）的 bundle。"""
     found = {}
@@ -418,6 +472,15 @@ def main():
             if not args.dry_run:
                 shutil.rmtree(path)
             removed += 1
+
+    home = build_homepage()
+    if home is not None:
+        home_idx = CONTENT / "_index.md"
+        if not (home_idx.exists() and home_idx.read_text(encoding="utf-8") == home):
+            print("  🏠 更新首页文案  ← dairy/Orangeorchard.md")
+            if not args.dry_run:
+                home_idx.write_text(home, encoding="utf-8")
+            updated += 1
 
     print(f"\n共 {len(published) + len(photos)} 篇已发布：新增 {added}，更新 {updated}，下线 {removed}")
     if args.dry_run:

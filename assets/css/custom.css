@@ -1,13 +1,25 @@
 /* ===== Apple Design v2 — 流体界面升级 ===== */
 /* 基于 WWDC "Designing Fluid Interfaces" 原则 */
 
-/* -- 1. 字体：光学尺寸 + 动态字距 -- */
+/* -- 1. 字体：张子山体标题 + 思源宋体正文 -- */
+@font-face {
+  font-family: "HYZhangZiShanTi";
+  src: url("/fonts/HYZhangZiShanTi.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro SC",
-    "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: 0.01em;
+}
+
+/* 标题用张子山体，回退到楷体系 */
+h1, h2, h3, h4, h5, h6,
+.font-title-zzs {
+  font-family: "HYZhangZiShanTi", "Kaiti SC", "KaiTi", serif;
 }
 
 /* 大标题收紧字距 */
@@ -421,5 +433,73 @@ a:active, button:active, .article-link--card:active, .media-card:active,
   }
   .media-detail-info {
     font-size: 0.88rem;
+  }
+}
+
+/* ===== 极简首页（home/custom.html）===== */
+.home-prose {
+  min-height: 60vh;
+}
+.home-prose h1 {
+  font-size: 2.1rem;
+  line-height: 1.4;
+  margin-bottom: 2rem;
+}
+.home-prose p {
+  font-size: 1.05rem;
+  line-height: 2.3;
+  letter-spacing: 0.02em;
+  color: rgb(64 64 64);
+}
+.dark .home-prose p {
+  color: rgb(212 212 212);
+}
+.home-prose a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: rgb(212 212 212);
+  transition: text-decoration-color 0.2s ease;
+}
+.dark .home-prose a {
+  text-decoration-color: rgb(82 82 82);
+}
+.home-prose a:hover {
+  text-decoration-color: currentColor;
+}
+@media (max-width: 640px) {
+  .home-prose h1 {
+    font-size: 1.6rem;
+  }
+  .home-prose p {
+    font-size: 1rem;
+    line-height: 2.1;
+  }
+}
+
+/* ===== 照片墙掉落效果（photo-rain.js）===== */
+.photo-rain {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 40;
+}
+.photo-rain img {
+  width: 14vw;
+  height: 14vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  border-radius: 4%;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+@media (max-width: 768px) {
+  .photo-rain img {
+    width: 32vw;
+    height: 32vw;
   }
 }

@@ -1,0 +1,6 @@
+{{/* 照片墙掉落效果：仅 photos 栏目加载（GSAP + photo-rain.js）
+     放在 uncached 钩子里因为 extend-head.html 是 partialCached .Site，拿不到页面上下文 */}}
+{{ if eq .Section "photos" }}
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+  <script defer src="/js/photo-rain.js"></script>
+{{ end }}

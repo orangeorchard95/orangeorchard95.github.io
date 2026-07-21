@@ -1,38 +1,38 @@
 # -- Main Menu --
-[[main]]
-  name = "思考"
-  pageRef = "thoughts"
-  weight = 10
+# [[main]]
+#   name = "思考"
+#   pageRef = "thoughts"
+#   weight = 10
 
-[[main]]
-  name = "量化"
-  pageRef = "quant"
-  weight = 20
+# [[main]]
+#   name = "量化"
+#   pageRef = "quant"
+#   weight = 20
 
-[[main]]
-  name = "身体工厂"
-  pageRef = "bodyfactory"
-  weight = 30
+# [[main]]
+#   name = "身体工厂"
+#   pageRef = "bodyfactory"
+#   weight = 30
 
-[[main]]
-  name = "分享"
-  pageRef = "sharing"
-  weight = 40
+# [[main]]
+#   name = "分享"
+#   pageRef = "sharing"
+#   weight = 40
 
-[[main]]
-  name = "照片墙"
-  pageRef = "photos"
-  weight = 45
+# [[main]]
+#   name = "照片墙"
+#   pageRef = "photos"
+#   weight = 45
 
-[[main]]
-  name = "书影"
-  pageRef = "media"
-  weight = 47
+# [[main]]
+#   name = "书影"
+#   pageRef = "media"
+#   weight = 47
 
-[[main]]
-  name = "关于"
-  pageRef = "about"
-  weight = 50
+# [[main]]
+#   name = "关于"
+#   pageRef = "about"
+#   weight = 50
 
 # -- Footer Menu --
 [[footer]]
